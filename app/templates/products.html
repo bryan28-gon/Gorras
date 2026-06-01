@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="title">Productos</h2>
+<form class="d-flex gap-2 mb-3">
+    <input name="q" value="{{ q }}" class="form-control" placeholder="Buscar productos">
+    <button class="btn btn-warning"><i class="bi bi-search"></i> Buscar</button>
+</form>
+<div class="row g-3">
+{% for p in products %}
+  <div class="col-md-4">
+    <div class="card p-3 h-100">
+      <h5>{{ p.name }}</h5>
+      <p>{{ p.description }}</p>
+      <p><strong>${{ '%.2f'|format(p.price) }}</strong> | Stock: {{ p.stock }}</p>
+      <div class="d-flex gap-2">
+        <a href="/product/{{ p.id }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Ver detalle</a>
+        <form method="post" action="/cart/add/{{ p.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button class="btn btn-success btn-sm"><i class="bi bi-cart-plus"></i> Agregar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

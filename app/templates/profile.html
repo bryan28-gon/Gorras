@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="title">Perfil usuario</h2>
+{% if error %}<div class="alert alert-warning">{{ error }}</div>{% endif %}
+<p><strong>Rol:</strong> {{ role }}</p>
+<form method="post" class="card p-3 form-card">
+    <label>Direccion</label>
+    <input name="address" value="{{ user.address or '' }}" class="form-control mb-2" required>
+    <label>Telefono</label>
+    <input name="phone" value="{{ user.phone or '' }}" class="form-control mb-2" required>
+    <label>Tarjeta</label>
+    <input name="card" class="form-control mb-3" placeholder="Numero de tarjeta" required>
+    <button class="btn btn-primary"><i class="bi bi-credit-card"></i> Guardar tarjeta, direccion y telefono</button>
+</form>
+{% endblock %}

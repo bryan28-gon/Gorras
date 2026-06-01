@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4">
+    <h2 class="title">{{ product.name }}</h2>
+    <p>{{ product.description }}</p>
+    <p>Precio: <strong>${{ '%.2f'|format(product.price) }}</strong></p>
+    <p>Stock disponible: {{ product.stock }}</p>
+    <form method="post" action="/cart/add/{{ product.id }}" class="d-flex gap-2">
+        <input name="quantity" type="number" value="1" min="1" class="form-control w-25">
+        <button class="btn btn-success"><i class="bi bi-cart-plus"></i> Agregar al carrito</button>
+    </form>
+</div>
+{% endblock %}

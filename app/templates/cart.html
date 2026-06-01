@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="title">Carrito / Compra</h2>
+<table class="table table-striped">
+    <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr></thead>
+    <tbody>
+    {% for i in items %}
+    <tr><td>{{ i.product.name }}</td><td>{{ i.quantity }}</td><td>${{ '%.2f'|format(i.quantity * i.product.price) }}</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<h4>Total: ${{ '%.2f'|format(total) }}</h4>
+<div class="d-flex gap-2">
+    <form method="post" action="/cart/checkout">
+        <button class="btn btn-success"><i class="bi bi-check-circle"></i> Comprar y aceptar producto</button>
+    </form>
+    <form method="post" action="/cart/cancel">
+        <button class="btn btn-danger"><i class="bi bi-x-circle"></i> Cancelar compra</button>
+    </form>
+</div>
+{% endblock %}
