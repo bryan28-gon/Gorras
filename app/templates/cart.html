@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 <h2 class="title">Carrito / Compra</h2>
+{% if ok %}<div class="alert alert-success">{{ ok }}</div>{% endif %}
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
 <table class="table table-striped">
-    <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr></thead>
+    <thead><tr><th>Gorra</th><th>Color/Ajuste</th><th>Cantidad</th><th>Precio</th></tr></thead>
     <tbody>
     {% for i in items %}
-    <tr><td>{{ i.product.name }}</td><td>{{ i.quantity }}</td><td>${{ '%.2f'|format(i.quantity * i.product.price) }}</td></tr>
+    <tr>
+        <td>{{ i.product.name }}</td>
+        <td>{{ i.product.color or 'N/A' }} / {{ i.product.size or 'N/A' }}</td>
+        <td>{{ i.quantity }}</td>
+        <td>${{ '%.2f'|format(i.quantity * i.product.price) }}</td>
+    </tr>
     {% endfor %}
     </tbody>
 </table>

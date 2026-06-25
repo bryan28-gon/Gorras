@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card p-4">
+<div class="card p-4 product-detail">
+    {% if product.image_url %}
+    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="detail-img mb-3">
+    {% endif %}
     <h2 class="title">{{ product.name }}</h2>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="badge text-bg-dark">SKU {{ product.sku or 'sin SKU' }}</span>
+        <span class="badge text-bg-primary">Marca {{ product.brand or 'N/A' }}</span>
+        <span class="badge text-bg-success">Color {{ product.color or 'N/A' }}</span>
+        <span class="badge text-bg-warning">Ajuste {{ product.size or 'N/A' }}</span>
+    </div>
     <p>{{ product.description }}</p>
     <p>Precio: <strong>${{ '%.2f'|format(product.price) }}</strong></p>
     <p>Stock disponible: {{ product.stock }}</p>

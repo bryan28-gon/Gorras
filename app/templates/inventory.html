@@ -2,27 +2,48 @@
 {% block content %}
 <h2 class="title">Inventario</h2>
 <form class="d-flex gap-2 mb-3">
-    <input name="q" value="{{ q }}" class="form-control" placeholder="Buscar productos">
-    <button class="btn btn-warning">Buscar</button>
+    <input name="q" value="{{ q }}" class="form-control" placeholder="Buscar por gorra, color, ajuste, marca o SKU">
+    <button class="btn btn-warning"><i class="bi bi-search"></i> Buscar</button>
 </form>
+
 <form method="post" action="/inventory/add" class="card p-3 mb-4">
-    <h5>Agregar producto</h5>
-    <input name="name" placeholder="Nombre" class="form-control mb-2" required>
+    <h5><i class="bi bi-plus-circle"></i> Agregar gorra</h5>
+    <div class="row g-2">
+        <div class="col-md-3"><input name="sku" placeholder="SKU" class="form-control mb-2"></div>
+        <div class="col-md-5"><input name="name" placeholder="Modelo" class="form-control mb-2" required></div>
+        <div class="col-md-4"><input name="brand" placeholder="Marca" class="form-control mb-2"></div>
+        <div class="col-md-3"><input name="color" placeholder="Color" class="form-control mb-2"></div>
+        <div class="col-md-3"><input name="size" placeholder="Ajuste o talla" class="form-control mb-2"></div>
+        <div class="col-md-3"><input name="price" type="number" step="0.01" placeholder="Precio" class="form-control mb-2" required></div>
+        <div class="col-md-3"><input name="stock" type="number" placeholder="Stock" class="form-control mb-2" required></div>
+    </div>
+    <input name="image_url" placeholder="URL de imagen real de la gorra" class="form-control mb-2">
     <input name="description" placeholder="Descripcion" class="form-control mb-2" required>
-    <input name="price" type="number" step="0.01" placeholder="Precio" class="form-control mb-2" required>
-    <input name="stock" type="number" placeholder="Stock" class="form-control mb-2" required>
     <button class="btn btn-success"><i class="bi bi-plus-circle"></i> Agregar</button>
 </form>
 
 {% for p in products %}
-<div class="card p-3 mb-3">
-    <strong>{{ p.name }}</strong> - ${{ '%.2f'|format(p.price) }} - stock: {{ p.stock }}
-    <small>{{ p.description }}</small>
-    <div class="d-flex gap-2 mt-2">
-        <form method="post" action="/inventory/edit/{{ p.id }}" class="d-flex gap-2 flex-wrap">
+<div class="card inventory-row p-3 mb-3">
+    <div class="d-flex gap-3 align-items-center flex-wrap">
+        {% if p.image_url %}
+        <img src="{{ p.image_url }}" alt="{{ p.name }}" class="inventory-img">
+        {% endif %}
+        <div>
+            <strong>{{ p.name }}</strong> - ${{ '%.2f'|format(p.price) }} - stock: {{ p.stock }}
+            <small class="d-block">{{ p.sku or 'sin SKU' }} | {{ p.brand or 'sin marca' }} | {{ p.color or 'sin color' }} | ajuste {{ p.size or 'N/A' }}</small>
+            <small class="d-block">{{ p.description }}</small>
+        </div>
+    </div>
+    <div class="d-flex gap-2 mt-3 flex-wrap">
+        <form method="post" action="/inventory/edit/{{ p.id }}" class="inventory-edit d-flex gap-2 flex-wrap">
+            <input name="sku" value="{{ p.sku or '' }}" placeholder="SKU">
             <input name="name" value="{{ p.name }}" required>
+            <input name="brand" value="{{ p.brand or '' }}" placeholder="Marca">
+            <input name="color" value="{{ p.color or '' }}" placeholder="Color">
+            <input name="size" value="{{ p.size or '' }}" placeholder="Ajuste">
             <input name="description" value="{{ p.description }}" required>
             <input name="price" type="number" step="0.01" value="{{ p.price }}" required>
+            <input name="image_url" value="{{ p.image_url or '' }}" placeholder="Imagen">
             <button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Editar</button>
         </form>
         <form method="post" action="/inventory/delete/{{ p.id }}">
@@ -30,11 +51,11 @@
         </form>
         <form method="post" action="/inventory/decrease/{{ p.id }}" class="d-flex gap-1">
             <input name="qty" type="number" value="1" min="1" style="width:70px;">
-            <button class="btn btn-warning btn-sm">Descontar</button>
+            <button class="btn btn-warning btn-sm"><i class="bi bi-dash-circle"></i> Descontar</button>
         </form>
         <form method="post" action="/inventory/increase/{{ p.id }}" class="d-flex gap-1">
             <input name="qty" type="number" value="1" min="1" style="width:70px;">
-            <button class="btn btn-success btn-sm">Aumentar</button>
+            <button class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Aumentar</button>
         </form>
     </div>
 </div>

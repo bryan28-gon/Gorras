@@ -24,10 +24,15 @@ class Product(Base):
     __tablename__ = "products"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    sku: Mapped[str | None] = mapped_column(String(30), unique=True, nullable=True)
     name: Mapped[str] = mapped_column(String(120), index=True)
+    brand: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    color: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    size: Mapped[str | None] = mapped_column(String(20), nullable=True)
     description: Mapped[str] = mapped_column(String(500))
     price: Mapped[float] = mapped_column(Float)
     stock: Mapped[int] = mapped_column(Integer, default=0)
+    image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     cart_items = relationship("CartItem", back_populates="product")
 
 

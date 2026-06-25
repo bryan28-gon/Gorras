@@ -1,23 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="title">Productos</h2>
+<section class="pos-hero mb-4">
+  <div>
+    <h1>Gorras POS</h1>
+    <p>Venta de gorras con carrito, inventario y compras sincronizadas por hilos.</p>
+  </div>
+</section>
+<h2 class="title">Catalogo de gorras</h2>
 <form class="d-flex gap-2 mb-3">
-    <input name="q" value="{{ q }}" class="form-control" placeholder="Buscar productos">
+    <input name="q" value="{{ q }}" class="form-control" placeholder="Buscar por modelo, color, ajuste o SKU">
     <button class="btn btn-warning"><i class="bi bi-search"></i> Buscar</button>
 </form>
 <div class="row g-3">
 {% for p in products %}
   <div class="col-md-4">
-    <div class="card p-3 h-100">
+    <div class="card product-card h-100">
+      {% if p.image_url %}
+      <img src="{{ p.image_url }}" alt="{{ p.name }}" class="product-img">
+      {% else %}
+      <div class="product-img product-placeholder"><i class="bi bi-bag-heart"></i></div>
+      {% endif %}
+      <div class="p-3">
       <h5>{{ p.name }}</h5>
-      <p>{{ p.description }}</p>
-      <p><strong>${{ '%.2f'|format(p.price) }}</strong> | Stock: {{ p.stock }}</p>
+      <p class="text-muted mb-2">{{ p.description }}</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="badge text-bg-success">{{ p.color or 'Verde' }}</span>
+        <span class="badge text-bg-primary">{{ p.size or 'Ajustable' }}</span>
+        <span class="badge text-bg-warning">{{ p.brand or 'Marca' }}</span>
+        <span class="badge text-bg-danger">Stock {{ p.stock }}</span>
+      </div>
+      <p><strong>${{ '%.2f'|format(p.price) }}</strong></p>
       <div class="d-flex gap-2">
         <a href="/product/{{ p.id }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Ver detalle</a>
         <form method="post" action="/cart/add/{{ p.id }}">
           <input type="hidden" name="quantity" value="1">
           <button class="btn btn-success btn-sm"><i class="bi bi-cart-plus"></i> Agregar</button>
         </form>
+      </div>
       </div>
     </div>
   </div>
