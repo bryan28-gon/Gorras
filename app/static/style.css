@@ -84,6 +84,29 @@ body {
   max-width: 150px;
 }
 
+.checkout-panel {
+  position: sticky;
+  top: 1rem;
+}
+
+.checkout-panel h3 {
+  font-family: "Poppins", "Quicksand", sans-serif;
+  font-weight: 700;
+}
+
+.summary-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.7rem 0;
+}
+
+.total-line {
+  border-bottom: 0;
+  font-size: 1.35rem;
+}
+
 .tech-card code {
   display: block;
   white-space: normal;

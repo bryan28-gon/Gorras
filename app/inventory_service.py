@@ -75,16 +75,46 @@ def _checkout_sync(user_id: int) -> dict:
                 if not items:
                     return {"ok": False, "error": "El carrito esta vacio"}
 
-                total = 0.0
+                subtotal = 0.0
+                ticket_items = []
                 for item in items:
                     if not item.product or item.product.stock < item.quantity:
                         return {"ok": False, "error": "Stock insuficiente"}
                     item.product.stock -= item.quantity
-                    total += item.quantity * item.product.price
+                    line_total = item.quantity * item.product.price
+                    subtotal += line_total
+                    ticket_items.append(
+                        {
+                            "sku": item.product.sku,
+                            "name": item.product.name,
+                            "brand": item.product.brand,
+                            "color": item.product.color,
+                            "size": item.product.size,
+                            "quantity": item.quantity,
+                            "unit_price": item.product.price,
+                            "line_total": line_total,
+                        }
+                    )
 
-                db.add(Purchase(user_id=user_id, total=total, status="ACEPTADO"))
+                iva = round(subtotal * 0.16, 2)
+                total = round(subtotal + iva, 2)
+                purchase = Purchase(user_id=user_id, total=total, status="ACEPTADO")
+                db.add(purchase)
+                db.flush()
                 db.execute(delete(CartItem).where(CartItem.user_id == user_id))
-                return {"ok": True, "total": total}
+                return {
+                    "ok": True,
+                    "total": total,
+                    "ticket": {
+                        "purchase_id": purchase.id,
+                        "customer_name": user.username,
+                        "customer_email": user.email,
+                        "subtotal": subtotal,
+                        "iva": iva,
+                        "total": total,
+                        "items": ticket_items,
+                    },
+                }
 
 
 async def decrease_stock(product_id: int, quantity: int) -> bool:

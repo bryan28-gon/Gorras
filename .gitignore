@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 uvicorn*.out
 uvicorn*.err
+.env

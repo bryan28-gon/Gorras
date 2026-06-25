@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .db import Base, engine, get_db
+from .email_service import send_ticket_email, ticket_timestamp
 from .inventory_service import checkout_cart, decrease_stock, increase_stock
 from .models import CartItem, Product, User
 from .security import hash_password, verify_password
@@ -192,8 +193,22 @@ async def cart_page(request: Request, db: AsyncSession = Depends(get_db), ok: st
             select(CartItem).where(CartItem.user_id == user_id).options(selectinload(CartItem.product))
         )
     ).all()
-    total = sum(i.quantity * i.product.price for i in items if i.product)
-    return render(request, "cart.html", {"items": items, "total": total, "user_id": user_id, "ok": ok, "error": error})
+    subtotal = sum(i.quantity * i.product.price for i in items if i.product)
+    iva = round(subtotal * 0.16, 2)
+    total = round(subtotal + iva, 2)
+    return render(
+        request,
+        "cart.html",
+        {
+            "items": items,
+            "subtotal": subtotal,
+            "iva": iva,
+            "total": total,
+            "user_id": user_id,
+            "ok": ok,
+            "error": error,
+        },
+    )
 
 
 @app.post("/cart/cancel")
@@ -218,7 +233,16 @@ async def checkout(request: Request, db: AsyncSession = Depends(get_db)):
     if not result["ok"]:
         target = "/profile" if "tarjeta" in result["error"] else "/cart"
         return RedirectResponse(f"{target}?error={result['error']}", status_code=303)
-    return RedirectResponse("/cart?ok=Compra aceptada", status_code=303)
+    ticket = result["ticket"]
+    ticket["created_at"] = ticket_timestamp()
+    try:
+        await send_ticket_email(ticket)
+    except Exception:
+        return RedirectResponse(
+            "/cart?ok=Compra aceptada&error=La compra se registro, pero no se pudo enviar el ticket por correo",
+            status_code=303,
+        )
+    return RedirectResponse("/cart?ok=Compra aceptada y ticket enviado al correo registrado", status_code=303)
 
 
 @app.get("/profile")

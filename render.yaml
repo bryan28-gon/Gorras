@@ -10,3 +10,13 @@ services:
         value: sqlite+aiosqlite:///./pos.db
       - key: SYNC_DATABASE_URL
         value: sqlite:///./pos.db
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: STORE_EMAIL
+        sync: false
